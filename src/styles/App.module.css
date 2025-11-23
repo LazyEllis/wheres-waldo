@@ -1,3 +1,26 @@
+body {
+  background-color: #101828;
+}
+
+.characterList {
+  display: flex;
+  justify-content: center;
+  color: #fff;
+  padding-block: 5px;
+  gap: 10px;
+}
+
+.character {
+  text-align: center;
+  font-weight: 600;
+}
+
+.icons {
+  width: 75px;
+  height: auto;
+  margin: auto;
+}
+
 .frame {
   position: relative;
 }
