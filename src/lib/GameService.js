@@ -27,3 +27,9 @@ const request = async (endpoint, options = {}) => {
 };
 
 export const listCharacters = () => request("/characters");
+
+export const placeMarker = ({ id, coordinate }) =>
+  request(`/characters/${id}/markers`, {
+    method: "POST",
+    body: JSON.stringify(coordinate),
+  });

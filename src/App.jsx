@@ -1,12 +1,15 @@
 import { useState, useRef } from "react";
+import { MapPin } from "lucide-react";
 import { useQuery } from "./hooks/useQuery";
+import { useMutation } from "./hooks/useMutation";
 import { useOutsideClick } from "./hooks/useOutsideClick";
-import { listCharacters } from "./lib/GameService";
+import { listCharacters, placeMarker } from "./lib/GameService";
 import styles from "./styles/App.module.css";
 import photo from "./assets/mountain.jpg";
 
 const App = () => {
   const [position, setPosition] = useState(null);
+  const [markers, setMarkers] = useState([]);
   const frameRef = useRef(null);
 
   const {
@@ -15,17 +18,39 @@ const App = () => {
     error,
   } = useQuery({ queryFn: listCharacters });
 
+  const mutation = useMutation({
+    mutationFn: placeMarker,
+    onSuccess: (data) => {
+      if (data.found && !markers.some((marker) => marker.id === data.id)) {
+        setMarkers([...markers, { id: data.id, coordinate: position.page }]);
+      }
+
+      setPosition(null);
+    },
+  });
+
   useOutsideClick(frameRef, () => setPosition(null));
 
   const handlePositionSelect = (e) => {
-    const pageX = e.pageX - frameRef.current.offsetLeft;
-    const pageY = e.pageY - frameRef.current.offsetTop;
+    const image = e.target;
 
-    setPosition({ x: pageX, y: pageY });
+    const mouseX = e.pageX - frameRef.current.offsetLeft;
+    const mouseY = e.pageY - frameRef.current.offsetTop;
+
+    const ratioX = image.naturalWidth / image.offsetWidth;
+    const ratioY = image.naturalHeight / image.offsetHeight;
+
+    const positionX = Math.floor(ratioX * mouseX);
+    const positionY = Math.floor(ratioY * mouseY);
+
+    setPosition({
+      page: { x: mouseX, y: mouseY },
+      normalized: { x: positionX, y: positionY },
+    });
   };
 
-  const handleCharacterSelect = () => {
-    setPosition(null);
+  const handleCharacterSelect = (id) => {
+    mutation.mutate({ id, coordinate: position.normalized });
   };
 
   if (isLoading) {
@@ -40,7 +65,10 @@ const App = () => {
     <>
       <div className={styles.characterList}>
         {characters.map((character) => (
-          <div className={styles.character} key={character.id}>
+          <div
+            className={`${styles.character} ${markers.some((marker) => marker.id === character.id) ? styles.found : null}`}
+            key={character.id}
+          >
             <img src={character.image} alt="" className={styles.icons} />
             <div>{character.name}</div>
           </div>
@@ -56,13 +84,16 @@ const App = () => {
         {position && (
           <ul
             className={styles.dropdownItems}
-            style={{ left: `${position.x}px`, top: `${position.y}px` }}
+            style={{
+              left: `${position.page.x}px`,
+              top: `${position.page.y}px`,
+            }}
           >
             {characters.map((character) => (
               <li key={character.id}>
                 <button
                   className={styles.dropdownButton}
-                  onClick={handleCharacterSelect}
+                  onClick={() => handleCharacterSelect(character.id)}
                 >
                   {character.name}
                 </button>
@@ -70,6 +101,18 @@ const App = () => {
             ))}
           </ul>
         )}
+        {markers.map((marker) => (
+          <div
+            className={styles.markerContainer}
+            key={marker.id}
+            style={{
+              left: `${marker.coordinate.x}px`,
+              top: `${marker.coordinate.y}px`,
+            }}
+          >
+            <MapPin className={styles.marker} />
+          </div>
+        ))}
       </div>
     </>
   );
