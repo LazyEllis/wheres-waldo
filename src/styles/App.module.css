@@ -27,6 +27,7 @@ body {
 
 .frame {
   position: relative;
+  overflow-x: auto;
 }
 
 .image {

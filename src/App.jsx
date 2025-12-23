@@ -33,9 +33,10 @@ const App = () => {
 
   const handlePositionSelect = (e) => {
     const image = e.target;
+    const rect = image.getBoundingClientRect();
 
-    const mouseX = e.pageX - frameRef.current.offsetLeft;
-    const mouseY = e.pageY - frameRef.current.offsetTop;
+    const mouseX = e.clientX - rect.left;
+    const mouseY = e.clientY - rect.top;
 
     const ratioX = image.naturalWidth / image.offsetWidth;
     const ratioY = image.naturalHeight / image.offsetHeight;
