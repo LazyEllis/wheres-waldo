@@ -75,3 +75,41 @@ body {
     color: #101828;
   }
 }
+
+.toast {
+  position: fixed;
+  top: 10px;
+  right: 10px;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  width: 100%;
+  max-width: 20rem;
+  border-radius: 0.5rem;
+  background-color: #1e2939;
+  box-shadow:
+    0 0 #0000,
+    0 0 #0000,
+    0 0 #0000,
+    0 0 #0000,
+    0 10px 15px -3px #0000001a,
+    0 4px 6px -4px #0000001a;
+  outline: 1px solid;
+  outline-offset: calc(1px * -1);
+  opacity: 1;
+  padding: 1rem;
+}
+
+.toastIcon {
+  flex-shrink: 0;
+  height: 1.5rem;
+  width: 1.5rem;
+  color: #ff6467;
+}
+
+.toastMessage {
+  flex: 1;
+  width: 0;
+  font-weight: 600;
+  color: #fff;
+}

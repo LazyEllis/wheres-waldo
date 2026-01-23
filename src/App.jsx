@@ -1,5 +1,5 @@
 import { useState, useRef } from "react";
-import { MapPin } from "lucide-react";
+import { MapPin, CircleX } from "lucide-react";
 import { useQuery } from "./hooks/useQuery";
 import { useMutation } from "./hooks/useMutation";
 import { useOutsideClick } from "./hooks/useOutsideClick";
@@ -10,7 +10,9 @@ import photo from "./assets/mountain.jpg";
 const App = () => {
   const [position, setPosition] = useState(null);
   const [markers, setMarkers] = useState([]);
+  const [notification, setNotification] = useState("");
   const frameRef = useRef(null);
+  const toastRef = useRef(null);
 
   const {
     data: characters,
@@ -23,6 +25,8 @@ const App = () => {
     onSuccess: (data) => {
       if (data.found && !markers.some((marker) => marker.id === data.id)) {
         setMarkers([...markers, { id: data.id, coordinate: position.page }]);
+      } else {
+        setNotification(data.message);
       }
 
       setPosition(null);
@@ -30,6 +34,8 @@ const App = () => {
   });
 
   useOutsideClick(frameRef, () => setPosition(null));
+
+  useOutsideClick(toastRef, () => setNotification(""));
 
   const handlePositionSelect = (e) => {
     const image = e.target;
@@ -114,6 +120,12 @@ const App = () => {
             <MapPin className={styles.marker} />
           </div>
         ))}
+        {notification && (
+          <div className={styles.toast} ref={toastRef}>
+            <CircleX className={styles.toastIcon} />
+            <div className={styles.toastMessage}>{notification}</div>
+          </div>
+        )}
       </div>
     </>
   );
