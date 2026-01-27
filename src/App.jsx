@@ -1,16 +1,35 @@
-import { useState, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import { MapPin, CircleX } from "lucide-react";
 import { useQuery } from "./hooks/useQuery";
 import { useMutation } from "./hooks/useMutation";
 import { useOutsideClick } from "./hooks/useOutsideClick";
-import { listCharacters, placeMarker } from "./lib/GameService";
+import {
+  listCharacters,
+  placeMarker,
+  startTimer,
+  stopTimer,
+} from "./lib/GameService";
 import styles from "./styles/App.module.css";
 import photo from "./assets/mountain.jpg";
+
+const pad = (number, digits = 2) => ("00" + number).slice(-digits);
+
+const formatDuration = (duration) => {
+  const ms = duration % 1000;
+  duration = (duration - ms) / 1000;
+  const secs = duration % 60;
+  duration = (duration - secs) / 60;
+  const mins = duration % 60;
+
+  return `${pad(mins)}:${pad(secs)}.${pad(ms, 3)}`;
+};
 
 const App = () => {
   const [position, setPosition] = useState(null);
   const [markers, setMarkers] = useState([]);
   const [notification, setNotification] = useState("");
+  const [counter, setCounter] = useState(0);
+  const [timestamp, setTimestamp] = useState({ start: "", end: "" });
   const frameRef = useRef(null);
   const toastRef = useRef(null);
 
@@ -20,11 +39,34 @@ const App = () => {
     error,
   } = useQuery({ queryFn: listCharacters });
 
-  const mutation = useMutation({
+  const { mutate } = useMutation({
+    mutationFn: startTimer,
+    onSuccess: (data) => {
+      localStorage.setItem("token", data.token);
+      setTimestamp({ start: Date.now(), end: "" });
+    },
+  });
+
+  const stopTimerMutation = useMutation({
+    mutationFn: stopTimer,
+    onSuccess: (data) => {
+      localStorage.setItem("token", data.token);
+      setTimestamp({ ...timestamp, end: Date.now() });
+    },
+  });
+
+  const markerMutation = useMutation({
     mutationFn: placeMarker,
     onSuccess: (data) => {
       if (data.found && !markers.some((marker) => marker.id === data.id)) {
-        setMarkers([...markers, { id: data.id, coordinate: position.page }]);
+        const updatedMarkers = [
+          ...markers,
+          { id: data.id, coordinate: position.page },
+        ];
+        setMarkers(updatedMarkers);
+
+        if (updatedMarkers.length === characters.length)
+          stopTimerMutation.mutate();
       } else {
         setNotification(data.message);
       }
@@ -32,6 +74,24 @@ const App = () => {
       setPosition(null);
     },
   });
+
+  useEffect(() => {
+    if (characters) {
+      mutate();
+    }
+  }, [characters, mutate]);
+
+  useEffect(() => {
+    if (timestamp.start && !timestamp.end) {
+      const key = setInterval(() => {
+        setCounter(Date.now() - timestamp.start);
+      }, 10);
+
+      return () => {
+        clearInterval(key);
+      };
+    }
+  }, [timestamp.start, timestamp.end]);
 
   useOutsideClick(frameRef, () => setPosition(null));
 
@@ -57,7 +117,7 @@ const App = () => {
   };
 
   const handleCharacterSelect = (id) => {
-    mutation.mutate({ id, coordinate: position.normalized });
+    markerMutation.mutate({ id, coordinate: position.normalized });
   };
 
   if (isLoading) {
@@ -70,16 +130,19 @@ const App = () => {
 
   return (
     <>
-      <div className={styles.characterList}>
-        {characters.map((character) => (
-          <div
-            className={`${styles.character} ${markers.some((marker) => marker.id === character.id) ? styles.found : null}`}
-            key={character.id}
-          >
-            <img src={character.image} alt="" className={styles.icons} />
-            <div>{character.name}</div>
-          </div>
-        ))}
+      <div className={styles.header}>
+        <div className={styles.characterList}>
+          {characters.map((character) => (
+            <div
+              className={`${styles.character} ${markers.some((marker) => marker.id === character.id) ? styles.found : null}`}
+              key={character.id}
+            >
+              <img src={character.image} alt="" className={styles.icons} />
+              <div>{character.name}</div>
+            </div>
+          ))}
+        </div>
+        <div className={styles.timer}>{formatDuration(counter)}</div>
       </div>
       <div className={styles.frame} ref={frameRef}>
         <img

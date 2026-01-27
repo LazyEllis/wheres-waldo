@@ -1,13 +1,33 @@
 body {
   background-color: #101828;
+  color: #fff;
+}
+
+.header {
+  padding-block: 5px;
+  text-align: center;
+
+  @media (width >= 40rem) {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+  }
+}
+
+.timer {
+  font-size: 24px;
 }
 
 .characterList {
   display: flex;
   justify-content: center;
-  color: #fff;
-  padding-block: 5px;
   gap: 10px;
+  margin-bottom: 10px;
+
+  @media (width >= 40rem) {
+    margin-bottom: 0;
+  }
 }
 
 .character {

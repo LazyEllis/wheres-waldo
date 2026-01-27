@@ -6,6 +6,11 @@ const request = async (endpoint, options = {}) => {
     "Content-Type": "application/json",
   };
 
+  const token = localStorage.getItem("token");
+  if (token) {
+    headers.Authorization = `Bearer ${token}`;
+  }
+
   const config = {
     ...options,
     headers,
@@ -33,3 +38,7 @@ export const placeMarker = ({ id, coordinate }) =>
     method: "POST",
     body: JSON.stringify(coordinate),
   });
+
+export const startTimer = () => request("/timers", { method: "POST" });
+
+export const stopTimer = () => request("/timers", { method: "DELETE" });
