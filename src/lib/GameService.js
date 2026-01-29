@@ -42,3 +42,10 @@ export const placeMarker = ({ id, coordinate }) =>
 export const startTimer = () => request("/timers", { method: "POST" });
 
 export const stopTimer = () => request("/timers", { method: "DELETE" });
+
+export const getScore = () => request("/timers");
+
+export const listPlayers = () => request("/players");
+
+export const recordScore = (playerData) =>
+  request("/players", { method: "POST", body: JSON.stringify(playerData) });

@@ -1,0 +1,210 @@
+.dialog {
+  position: fixed;
+  inset: 0;
+  height: auto;
+  width: auto;
+  max-height: none;
+  max-width: none;
+  overflow-y: auto;
+  background: transparent;
+
+  &::backdrop {
+    background: transparent;
+  }
+}
+
+.backdrop {
+  position: fixed;
+  inset: 0;
+  background-color: color-mix(
+    in oklab,
+    oklch(55.1% 0.027 264.364) 75%,
+    transparent
+  );
+}
+
+.panelContainer {
+  display: flex;
+  min-height: 100%;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  text-align: center;
+
+  &:focus {
+    outline: none;
+  }
+
+  @media (width >= 40rem) {
+    padding: 0;
+  }
+}
+
+.panel {
+  position: relative;
+  overflow: hidden;
+  border-radius: 0.5rem;
+  text-align: left;
+  box-shadow:
+    20px 25px -5px rgb(0 0 0 / 0.1),
+    0 8px 10px -6px rgb(0 0 0 / 0.1);
+  outline: 1px solid color-mix(in oklab, #fff 10%, transparent);
+  outline-offset: -1px;
+  width: 100%;
+  max-width: 32rem;
+
+  @media (width >= 40rem) {
+    margin-block: 32px;
+  }
+}
+
+.panelBody {
+  background-color: #1e2939;
+  padding-inline: 16px;
+  padding-top: 20px;
+  padding-bottom: 16px;
+  text-align: left;
+  color: #fff;
+
+  @media (width >= 40rem) {
+    padding: 24px;
+    padding-bottom: 20px;
+  }
+}
+
+.dialogHeading,
+.score {
+  font-weight: 600;
+}
+
+.dialogContent {
+  margin-top: 8px;
+  font-size: 0.875rem;
+}
+
+.container,
+.form {
+  margin-top: 12px;
+}
+
+.form > :not(:last-child) {
+  margin-bottom: 24px;
+}
+
+.alert {
+  border-radius: 0.375rem;
+  padding: 8px 12px;
+  font-size: 0.875rem;
+  background-color: #fef2f2;
+  display: flex;
+}
+
+.alertIcon {
+  flex-grow: 0;
+  margin-right: 0.75rem;
+  color: #ff6467;
+}
+
+.errorHeading {
+  font-weight: 700;
+  color: #9f0712;
+}
+
+.errorList {
+  margin-top: 0.5rem;
+  list-style-type: disc;
+  padding-left: 1.25rem;
+  color: #c10007;
+
+  > :not(:last-child) {
+    margin-bottom: 4px;
+  }
+}
+
+.errorMessage {
+  color: #c10007;
+}
+
+.label {
+  display: block;
+  font-size: 0.875rem;
+  line-height: 1.5rem;
+  font-weight: 600;
+  color: #f3f4f6;
+}
+
+.inputContainer {
+  margin-top: 8px;
+}
+
+.input {
+  display: block;
+  width: 100%;
+  border-radius: 0.375rem;
+  background-color: color-mix(in oklab, #fff 5%, transparent);
+  padding-inline: 12px;
+  padding-block: 6px;
+  font-size: 1rem;
+  color: #fff;
+  outline: 1px solid color-mix(in oklab, #fff 10%, transparent);
+  outline-offset: -1px;
+
+  &:focus {
+    outline: 2px solid oklch(58.5% 0.233 277.117);
+    outline-offset: -2px;
+  }
+
+  @media (width >= 40rem) {
+    font-size: 0.875rem;
+    line-height: 1.5rem;
+  }
+}
+
+.button {
+  display: flex;
+  width: 100%;
+  justify-content: center;
+  border-radius: 0.375rem;
+  background-color: oklch(58.5% 0.233 277.117);
+  padding-inline: 12px;
+  padding-block: 6px;
+  font-size: 0.875rem;
+  line-height: 1.5rem;
+  font-weight: 600;
+
+  &:hover {
+    background-color: oklch(67.3% 0.182 276.935);
+  }
+
+  &:focus-visible {
+    outline: 2px solid oklch(58.5% 0.233 277.117);
+    outline-offset: -2px;
+  }
+}
+
+.leaderboard {
+  margin-block: 12px;
+  position: relative;
+  min-width: 100%;
+}
+
+.leaderboard,
+.tableBody {
+  > :not(:last-child) {
+    border-bottom: 1px solid #ffffff26;
+  }
+}
+
+.tableHeading {
+  padding-inline: 12px;
+  padding-block: 14px;
+  text-align: left;
+  font-weight: 600;
+}
+
+.tableDetail {
+  padding-inline: 12px;
+  padding-block: 16px;
+  font-weight: 500;
+  white-space: nowrap;
+}

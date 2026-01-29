@@ -9,20 +9,10 @@ import {
   startTimer,
   stopTimer,
 } from "./lib/GameService";
+import { formatDuration } from "./lib/utils";
+import GameOverDialog from "./components/GameOverDialog";
 import styles from "./styles/App.module.css";
 import photo from "./assets/mountain.jpg";
-
-const pad = (number, digits = 2) => ("00" + number).slice(-digits);
-
-const formatDuration = (duration) => {
-  const ms = duration % 1000;
-  duration = (duration - ms) / 1000;
-  const secs = duration % 60;
-  duration = (duration - secs) / 60;
-  const mins = duration % 60;
-
-  return `${pad(mins)}:${pad(secs)}.${pad(ms, 3)}`;
-};
 
 const App = () => {
   const [position, setPosition] = useState(null);
@@ -52,6 +42,7 @@ const App = () => {
     onSuccess: (data) => {
       localStorage.setItem("token", data.token);
       setTimestamp({ ...timestamp, end: Date.now() });
+      setMarkers([]);
     },
   });
 
@@ -118,6 +109,10 @@ const App = () => {
 
   const handleCharacterSelect = (id) => {
     markerMutation.mutate({ id, coordinate: position.normalized });
+  };
+
+  const handleRestart = () => {
+    mutate();
   };
 
   if (isLoading) {
@@ -190,6 +185,8 @@ const App = () => {
           </div>
         )}
       </div>
+
+      {timestamp.end && <GameOverDialog onRestart={handleRestart} />}
     </>
   );
 };
