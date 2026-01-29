@@ -125,7 +125,8 @@ const App = () => {
 
   return (
     <>
-      <div className={styles.header}>
+      <header className={styles.header}>
+        <h1 className="sr-only">Where's Waldo</h1>
         <div className={styles.characterList}>
           {characters.map((character) => (
             <div
@@ -138,8 +139,8 @@ const App = () => {
           ))}
         </div>
         <div className={styles.timer}>{formatDuration(counter)}</div>
-      </div>
-      <div className={styles.frame} ref={frameRef}>
+      </header>
+      <main className={styles.frame} ref={frameRef}>
         <img
           src={photo}
           alt="Illustration of a mountain"
@@ -184,9 +185,9 @@ const App = () => {
             <div className={styles.toastMessage}>{notification}</div>
           </div>
         )}
-      </div>
 
-      {timestamp.end && <GameOverDialog onRestart={handleRestart} />}
+        {timestamp.end && <GameOverDialog onRestart={handleRestart} />}
+      </main>
     </>
   );
 };
